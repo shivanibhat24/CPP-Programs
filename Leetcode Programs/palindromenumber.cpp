@@ -4,16 +4,12 @@ public:
         if (x < 0) {
             return false;
         }
-
-        long long reversed = 0;
-        long long temp = x;
-
-        while (temp != 0) {
-            int digit = temp % 10;
-            reversed = reversed * 10 + digit;
-            temp /= 10;
+        long reverse = 0;
+        int xcopy = x;
+        while (x > 0) {
+            reverse = (reverse * 10) + (x % 10);
+            x /= 10;
         }
-
-        return (reversed == x);
+        return reverse == xcopy;        
     }
 };
