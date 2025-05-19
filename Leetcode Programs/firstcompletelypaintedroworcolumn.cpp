@@ -1,0 +1,23 @@
+class Solution {
+ public:
+  int firstCompleteIndex(vector<int>& arr, vector<vector<int>>& mat) {
+    const int m = mat.size();
+    const int n = mat[0].size();
+    vector<int> rows(m);
+    vector<int> cols(n);
+    vector<int> numToRow(m * n + 1);
+    vector<int> numToCol(m * n + 1);
+    for (int i = 0; i < m; ++i)
+      for (int j = 0; j < n; ++j) {
+        numToRow[mat[i][j]] = i;
+        numToCol[mat[i][j]] = j;
+      }
+    for (int i = 0; i < arr.size(); ++i) {
+      if (++rows[numToRow[arr[i]]] == n)
+        return i;
+      if (++cols[numToCol[arr[i]]] == m)
+        return i;
+    }
+    throw;
+  }
+};
