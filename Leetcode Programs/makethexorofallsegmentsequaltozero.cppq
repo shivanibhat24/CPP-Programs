@@ -1,0 +1,61 @@
+class Solution {
+public:
+    int minChanges(vector<int>& nums, int k) {
+        int n = nums.size();
+        vector<vector<int>> groups(k);
+        for (int i = 0; i < n; i++) {
+            groups[i % k].push_back(nums[i]);
+        }
+        vector<vector<pair<int,int>>> freq(k);
+        for (int j = 0; j < k; j++) {
+            sort(groups[j].begin(), groups[j].end());
+            for (int p = 0; p < (int)groups[j].size();) {
+                int x = groups[j][p];
+                int cnt = 0;
+                while (p < (int)groups[j].size() && groups[j][p] == x) {
+                    cnt++;
+                    p++;
+                }
+                freq[j].push_back({x, cnt});
+            }
+        }
+        const int M = 1024;
+        const int NEG_INF = -1000000000;
+        vector<int> dp(M, NEG_INF), dp_next(M, NEG_INF);
+        dp[0] = 0;
+        for (int j = 0; j < k; j++) {
+            int best_prev = NEG_INF;
+            for (int x = 0; x < M; x++) {
+                best_prev = max(best_prev, dp[x]);
+            }
+            for (int t = 0; t < M; t++) {
+                dp_next[t] = best_prev;
+            }
+            for (auto &pr : freq[j]) {
+                int x = pr.first;
+                int count = pr.second;
+                for (int t = 0; t < M; t++) {
+                    if (dp[t] < 0) continue;  
+                    int newXor = t ^ x;
+                    dp_next[newXor] = max(dp_next[newXor], dp[t] + count);
+                }
+            }
+            dp.swap(dp_next);
+        }
+        return n - dp[0];
+    }
+};
+int ddddddd(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n, k;
+    cin >> n >> k;
+    vector<int> nums(n);
+    for (int i = 0; i < n; i++){
+        cin >> nums[i];
+    }    
+    Solution sol;
+    int answer = sol.minChanges(nums, k);
+    cout << answer << "\n";    
+    return 0;
+}
