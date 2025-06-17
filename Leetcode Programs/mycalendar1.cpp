@@ -1,18 +1,13 @@
 class MyCalendar {
 public:
-    unordered_set<int> m; 
-    MyCalendar() {}
-    bool book(int start, int end) {
-        unordered_set<int> subset;
-        for (int i = start; i < end; i++) {
-            if (m.count(i) > 0) { 
-                return false;
-            }
-            subset.insert(i);
-        }
-        for (auto x : subset) { 
-            m.insert(x);
-        }
+    MyCalendar() {        
+    }    
+    bool book(int startTime, int endTime) {
+        auto left = pairs.lower_bound({startTime, endTime});
+        if (left != pairs.end() && left->first < endTime) return false;
+        if (left != pairs.begin() && startTime < (--left)->second) return false;
+        pairs.insert({startTime, endTime});
         return true;
     }
+    set<pair<int, int>> pairs{};
 };
