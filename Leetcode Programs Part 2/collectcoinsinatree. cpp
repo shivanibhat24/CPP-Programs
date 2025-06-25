@@ -1,0 +1,62 @@
+class Solution {
+public:
+    struct edge{
+        int y, last_edge;
+    };
+    int collectTheCoins(vector<int>& coins, vector<vector<int>>& edges) {
+        ios_base::sync_with_stdio(false);
+        cin.tie(nullptr);
+        cout.tie(nullptr);
+        long long head[coins.size()], m=0, topo[coins.size()];
+        edge Edges[2L * coins.size()];
+        memset(head,0x80,sizeof(head));
+        memset(topo,0,sizeof(topo));
+        for (const auto &a: edges){
+            int lst = head[a[0]];
+            head[a[0]] = ++m;
+            Edges[m].y = a[1];
+            Edges[m].last_edge = lst;
+            topo[a[0]]++;
+            lst = head[a[1]];
+            head[a[1]] = ++m;
+            Edges[m].y = a[0];
+            Edges[m].last_edge = lst;
+            topo[a[1]]++;
+        }
+        queue<int> q;
+        for (int i=0;i<coins.size();++i) if (topo[i] == 1 && !coins[i]) q.push(i);
+        while (!q.empty()){
+            topo[q.front()]--;
+            auto e = head[q.front()];
+            q.pop();
+            while (e >= 0){
+                auto nxt = Edges[e].y;
+                if (topo[nxt] >= 1){
+                    topo[nxt]--;
+                    if (topo[nxt] == 1 && !coins[nxt])
+                        q.push(nxt);
+                }
+                e = Edges[e].last_edge;
+            }
+        }
+        for (int i=0;i<coins.size();++i)
+            if (topo[i]==1&& coins[i])q.push(i);
+    
+        while (!q.empty()){
+            topo[q.front()]--;
+            auto e = head[q.front()];
+            q.pop();
+            while (e >= 0){
+                auto nxt = Edges[e].y;
+                if (topo[nxt] >= 1){
+                    topo[nxt]--;
+                    if (topo[nxt]==1) topo[nxt]--;
+                }
+                e = Edges[e].last_edge;
+            }
+        }
+        int cnt=0;
+        for (auto &a: topo) if (a >= 1) cnt++;
+        return max(0,(cnt - 1) * 2);
+    }
+};
